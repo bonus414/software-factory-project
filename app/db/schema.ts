@@ -1,3 +1,4 @@
+import type { Markdown, PlainText } from "~/lib/text-format";
 import {
   sqliteTable,
   text,
@@ -343,7 +344,7 @@ export const comments = sqliteTable(
     ),
     // Markdown, 1–5000 chars. Enforced on write, rendered by
     // renderComment (untrusted input — never renderMarkdown).
-    body: text("body").notNull(),
+    body: text("body").$type<Markdown>().notNull(),
     createdAt: text("created_at")
       .notNull()
       .$defaultFn(() => new Date().toISOString()),
@@ -405,7 +406,7 @@ export const notes = sqliteTable(
       .notNull()
       .references(() => lessons.id),
     // Plain text, capped on write. Never rendered as Markdown.
-    body: text("body").notNull(),
+    body: text("body").$type<PlainText>().notNull(),
     createdAt: text("created_at")
       .notNull()
       .$defaultFn(() => new Date().toISOString()),

@@ -1,3 +1,4 @@
+import { markdown } from "../app/lib/text-format";
 import Database from "better-sqlite3";
 import { eq, gte, isNotNull, isNull, sql, type SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/better-sqlite3";
@@ -1878,8 +1879,14 @@ This course is still in draft while the cluster examples are rewritten against t
   // deleted question kept as a tombstone because it has a reply.
   // Only enrolled students comment.
 
-  function comment(values: typeof schema.comments.$inferInsert) {
-    const [row] = db.insert(schema.comments).values(values).returning().all();
+  function comment(
+    values: Omit<typeof schema.comments.$inferInsert, "body"> & { body: string }
+  ) {
+    const [row] = db
+      .insert(schema.comments)
+      .values({ ...values, body: markdown(values.body) })
+      .returning()
+      .all();
     return row;
   }
 

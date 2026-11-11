@@ -1,3 +1,4 @@
+import { markdown, type Markdown, type PlainText } from "~/lib/text-format";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useFetcher, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -108,7 +109,7 @@ type CommentAuthor = {
 
 type ThreadComment = {
   id: number;
-  body: string;
+  body: Markdown;
   createdAt: string;
   editedAt: string | null;
   deleted: boolean;
@@ -370,7 +371,7 @@ function getLessonThread(lessonId: number): ThreadComment[] {
     const deleted = row.deletedAt !== null;
     return {
       id: row.id,
-      body: deleted ? "" : row.body,
+      body: deleted ? markdown("") : row.body,
       createdAt: row.createdAt,
       editedAt: deleted ? null : row.editedAt,
       deleted,
@@ -1321,7 +1322,7 @@ function BookmarkToggle({ bookmarked }: { bookmarked: boolean }) {
 function LessonNote({
   note,
 }: {
-  note: { body: string; updatedAt: string } | null;
+  note: { body: PlainText; updatedAt: string } | null;
 }) {
   const fetcher = useFetcher<{ ok: boolean }>();
   const isSaving = fetcher.state !== "idle";

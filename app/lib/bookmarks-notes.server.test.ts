@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, expect, it } from "vitest";
-import { createTestDb, seedBaseData } from "~/test/setup";
+import { createTestDb, seedBaseData, seedLesson, type TestDb } from "~/test/setup";
 import * as schema from "~/db/schema";
 import { raiseRefundRequest, approveRefundRequest } from "./refunds.server";
 import { fakeNotifications } from "./notifications.fake.server";
@@ -11,22 +11,13 @@ import {
   getSaved,
 } from "./bookmarks-notes.server";
 
-let db: ReturnType<typeof createTestDb>;
+let db: TestDb;
 let base: ReturnType<typeof seedBaseData>;
 let lessonId: number;
 beforeEach(() => {
   db = createTestDb();
   base = seedBaseData(db);
-  const module = db
-    .insert(schema.modules)
-    .values({ courseId: base.course.id, title: "Basics", position: 1 })
-    .returning()
-    .get();
-  lessonId = db
-    .insert(schema.lessons)
-    .values({ moduleId: module.id, title: "First lesson", position: 1 })
-    .returning()
-    .get().id;
+  lessonId = seedLesson(db, base.course.id).id;
 });
 afterEach(() => db.$client.close());
 
@@ -78,16 +69,7 @@ describe("private Bookmarks and Notes", () => {
   });
 
   it("lists only the owner's rows newest first with their Lesson and Course", () => {
-    const module = db
-      .insert(schema.modules)
-      .values({ courseId: base.course.id, title: "More", position: 2 })
-      .returning()
-      .get();
-    const second = db
-      .insert(schema.lessons)
-      .values({ moduleId: module.id, title: "Second lesson", position: 1 })
-      .returning()
-      .get();
+    const second = seedLesson(db, base.course.id, "Second lesson", 2);
     const early = new Date("2026-01-01T00:00:00Z");
     const late = new Date("2026-01-02T00:00:00Z");
     toggleBookmark(db, base.user.id, lessonId, early);

@@ -1,3 +1,4 @@
+import type { Markdown } from "~/lib/text-format";
 import { useEffect, useState } from "react";
 import { Link, data, isRouteErrorResponse, useFetcher } from "react-router";
 import { toast } from "sonner";
@@ -30,7 +31,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 
 type QueuedQuestion = {
   id: number;
-  body: string;
+  body: Markdown;
   createdAt: string;
   lessonId: number;
   lessonTitle: string;
