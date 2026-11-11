@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { createTestDb, seedBaseData } from "~/test/setup";
+import { createTestDb, seedBaseData, type TestDb } from "~/test/setup";
 import { eq } from "drizzle-orm";
 import * as schema from "~/db/schema";
 import {
@@ -14,7 +14,6 @@ import {
   type FakeNotifications,
 } from "./notifications.fake.server";
 
-type TestDb = ReturnType<typeof createTestDb>;
 
 let db: TestDb;
 let base: ReturnType<typeof seedBaseData>;

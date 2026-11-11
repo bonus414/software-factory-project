@@ -16,10 +16,6 @@ import {
   type Notifications,
 } from "~/lib/notifications.server";
 
-// ─── User sync and Notification preferences ───
-// Keeps Cadence's users in sync with the Notifications port, and reads and
-// changes which Notification categories reach each person's feed.
-
 function defaultPreferences(): NotificationPreferences {
   const set: NotificationPreferences = {};
   for (const category of NOTIFICATION_CATEGORIES) {

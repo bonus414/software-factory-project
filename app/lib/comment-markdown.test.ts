@@ -1,5 +1,8 @@
+import { markdown } from "./text-format";
 import { describe, it, expect } from "vitest";
-import { renderComment } from "./comment-markdown.server";
+import { renderComment as renderMarkdownComment } from "./comment-markdown.server";
+
+const renderComment = (text: string) => renderMarkdownComment(markdown(text));
 
 describe("renderComment", () => {
   describe("markdown", () => {

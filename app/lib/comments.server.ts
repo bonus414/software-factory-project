@@ -1,3 +1,4 @@
+import { markdown } from "./text-format";
 import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import * as schema from "~/db/schema";
 import { eq } from "drizzle-orm";
@@ -9,14 +10,6 @@ import {
   findNotificationPerson,
   type Notifications,
 } from "~/lib/notifications.server";
-
-// ─── Comments ───
-// Posting, editing and soft-deleting comments on a lesson: Discussion Questions and
-// Discussion Replies. See GLOSSARY.md for the language.
-//
-// Every function takes the database first, so tests can hand in an in-memory
-// one, and the Notifications port last, so tests can hand in a fake. Uses
-// positional parameters (project convention).
 
 export type Db = BetterSQLite3Database<typeof schema>;
 
@@ -91,7 +84,7 @@ export async function createComment(
       userId: authorId,
       lessonId,
       parentId,
-      body: trimmed,
+      body: markdown(trimmed),
       createdAt: now.toISOString(),
     })
     .returning()
@@ -280,7 +273,7 @@ export function editComment(
 
   const comment = db
     .update(comments)
-    .set({ body: trimmed, editedAt: now.toISOString() })
+    .set({ body: markdown(trimmed), editedAt: now.toISOString() })
     .where(eq(comments.id, commentId))
     .returning()
     .get();

@@ -32,7 +32,7 @@ export function createTestDb() {
  * Seeds a minimal set of base data (user, category, course) that most tests need.
  * Returns the created IDs for use in test assertions.
  */
-export function seedBaseData(testDb: ReturnType<typeof createTestDb>) {
+export function seedBaseData(testDb: TestDb) {
   const user = testDb
     .insert(schema.users)
     .values({
@@ -74,4 +74,24 @@ export function seedBaseData(testDb: ReturnType<typeof createTestDb>) {
     .get();
 
   return { user, instructor, category, course };
+}
+
+export type TestDb = ReturnType<typeof createTestDb>;
+
+export function seedLesson(
+  db: TestDb,
+  courseId: number,
+  title = "First lesson",
+  position = 1
+) {
+  const module = db
+    .insert(schema.modules)
+    .values({ courseId, title: "Basics", position })
+    .returning()
+    .get();
+  return db
+    .insert(schema.lessons)
+    .values({ moduleId: module.id, title, position: 1 })
+    .returning()
+    .get();
 }
